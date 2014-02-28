@@ -38,5 +38,5 @@
     simulator.addEntity(box);
     simulator.setEntityInteractionProperties(ball, box, 0.1, 0.99);
     
-	simulator.start();
+    simulator.start();
 }());

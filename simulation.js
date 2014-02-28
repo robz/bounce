@@ -50,9 +50,9 @@ var makeEntity = function (spec, my) {
     };
     
     that.setCollisionCallback = function (f) {
-		that.body.addEventListener("collide", function (e) {
-			f(e);
-		});
+        that.body.addEventListener("collide", function (e) {
+            f(e);
+        });
     };
     
     return that;
@@ -61,7 +61,7 @@ var makeEntity = function (spec, my) {
 var makeSphere = function (spec, my) {
     "use strict";
     my = my || {};
-	var that = makeEntity(spec, my);
+    var that = makeEntity(spec, my);
     
     my.radius = spec.radius;
     my.geometry = new THREE.SphereGeometry(my.radius, 16, 16);
@@ -75,10 +75,10 @@ var makeSphere = function (spec, my) {
 var makeBox = function (spec, my) {
     "use strict";
     my = my || {};
-	var that = makeEntity(spec, my);
+    var that = makeEntity(spec, my);
     
     my.dimension = {
-		width: (spec.dimension && spec.dimension.width) || 0,
+        width: (spec.dimension && spec.dimension.width) || 0,
         height: (spec.dimension && spec.dimension.height) || 0,
         depth: (spec.dimension && spec.dimension.depth) || 0
     };
@@ -120,9 +120,9 @@ var makeSimulation = function (spec) {
         10000
     );
         
-	camera.position.x = 100;
-	camera.position.y = 50;
-	camera.position.z = 200;
+    camera.position.x = 100;
+    camera.position.y = 50;
+    camera.position.z = 200;
     
     scene = new THREE.Scene();
         
@@ -142,13 +142,13 @@ var makeSimulation = function (spec) {
     renderer.setClearColor(new THREE.Color(0xeeeeee), 1);
     
     controls = new THREE.TrackballControls(camera);
-	controls.target.set(0, 0, 0);
+    controls.target.set(0, 0, 0);
     
     document.body.appendChild(renderer.domElement);
     
-	world = new CANNON.World();
-	world.gravity.set(0, -19.82, 0);
-	world.broadphase = new CANNON.NaiveBroadphase();
+    world = new CANNON.World();
+    world.gravity.set(0, -19.82, 0);
+    world.broadphase = new CANNON.NaiveBroadphase();
     
     that.setEntityInteractionProperties = function (
         entity1,
@@ -156,7 +156,7 @@ var makeSimulation = function (spec) {
         friction,
         restitution
     ) {
-		world.addContactMaterial(new CANNON.ContactMaterial(
+        world.addContactMaterial(new CANNON.ContactMaterial(
             entity1.physicalMaterial,
             entity2.physicalMaterial,
             friction,
@@ -164,21 +164,21 @@ var makeSimulation = function (spec) {
         ));
     };
     
-	that.addEntity = function (e) {
-		scene.add(e.mesh);
+    that.addEntity = function (e) {
+        scene.add(e.mesh);
         world.add(e.body);
         entities.push(e);
     };
     
     that.start = function () {
-		(function animate() {
+        (function animate() {
             requestAnimationFrame(animate);
             
-			world.step(1.0 / 60.0);
+            world.step(1.0 / 60.0);
             
             entities.forEach(function (e) {
-				e.body.position.copy(e.mesh.position);
-				e.body.quaternion.copy(e.mesh.quaternion);
+                e.body.position.copy(e.mesh.position);
+                e.body.quaternion.copy(e.mesh.quaternion);
             });
             
             controls.update();
