@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global THREE, requestAnimationFrame, makeSimulation, makeBox, makeSphere */
+/*global makeSimulation, makeBox, makeSphere */
 
 (function () {
     "use strict";
