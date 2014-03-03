@@ -6,10 +6,16 @@ var makeEntity = function (spec, my) {
     var that = {};
     
     // protected members
-    my.position = {
+    my.startingPosition = {
         x: (spec.position && spec.position.x) || 0,
         y: (spec.position && spec.position.y) || 0,
         z: (spec.position && spec.position.z) || 0
+    };
+    my.startingQuaterion = {
+        x: (spec.quaterion && spec.quaterion.x) || 0,
+        y: (spec.quaterion && spec.quaterion.y) || 0,
+        z: (spec.quaterion && spec.quaterion.z) || 0,
+        w: (spec.quaterion && spec.quaterion.w) || 0
     };
     my.mass = spec.mass || 0;
     my.color = spec.color || 0xFFFFFF;
@@ -21,15 +27,11 @@ var makeEntity = function (spec, my) {
     my.geometry = null;
     my.shape = null;
     
-    that.init = function (simulator) {
+    that.init = function () {
         that.mesh = new THREE.Mesh(
             my.geometry,
             new THREE.MeshLambertMaterial({color: my.color})
         );
-        
-        that.mesh.position.x = my.position.x;
-        that.mesh.position.y = my.position.y;
-        that.mesh.position.z = my.position.z;
         
         that.mesh.receiveShadow = my.receiveShadow;
         that.mesh.castShadow = my.castShadow;
@@ -42,17 +44,42 @@ var makeEntity = function (spec, my) {
             that.physicalMaterial
         );
 
-        that.body.position.set(
-            my.position.x,
-            my.position.y,
-            my.position.z
-        );
+        that.setPose(my.startingPosition, my.startingQuaterion);
     };
     
     that.setCollisionCallback = function (f) {
         that.body.addEventListener("collide", function (e) {
             f(e);
         });
+    };
+
+    that.setPose = function (position, quaternion) {
+        that.body.position.set(
+            position.x,
+            position.y,
+            position.z
+        );
+
+        that.body.position.copy(that.mesh.position);
+        
+        if (quaternion) {
+            that.body.quaternion.set(
+                quaternion.x,
+                quaternion.y,
+                quaternion.z,
+                quaternion.w
+            );
+
+            that.body.quaternion.copy(that.mesh.quaternion);
+        }
+    };
+
+    that.translate = function (dx, dy, dz) {
+        that.setPose({
+            x: that.body.position.x + dx,
+            y: that.body.position.y + dy,
+            z: that.body.position.z + dz
+        }, null);
     };
     
     return that;
@@ -82,15 +109,17 @@ var makeBox = function (spec, my) {
         height: (spec.dimension && spec.dimension.height) || 0,
         depth: (spec.dimension && spec.dimension.depth) || 0
     };
+
     my.geometry = new THREE.CubeGeometry(
         my.dimension.width,
         my.dimension.height,
         my.dimension.depth
     );
+
     my.shape = new CANNON.Box(new CANNON.Vec3(
-        my.dimension.width,
-        my.dimension.height,
-        my.dimension.depth
+        my.dimension.width/2,
+        my.dimension.height/2,
+        my.dimension.depth/2
     ));
     
     that.init();
@@ -164,10 +193,12 @@ var makeSimulation = function (spec) {
         ));
     };
     
-    that.addEntity = function (e) {
-        scene.add(e.mesh);
-        world.add(e.body);
-        entities.push(e);
+    that.addEntities = function (ents) {
+        ents.forEach(function (e) {
+            scene.add(e.mesh);
+            world.add(e.body);
+            entities.push(e);
+        });
     };
     
     that.start = function () {
