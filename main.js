@@ -7,6 +7,7 @@
         
         ball = makeSphere({
             castShadow: true,
+            color: 0x660000,
             radius: 30,
             position: {
                 x: 0,
@@ -18,10 +19,11 @@
         
         paddle = makeBox({
             receiveShadow: true,
+            castShadow: true,
             dimension: {
-                width: 150,
+                width: 50,
                 height: 3,
-                depth: 150
+                depth: 50
             },
             position: {
                 x: 0,
@@ -41,7 +43,8 @@
                 x: 0,
                 y: -100,
                 z: 0
-            }
+            },
+            color: 0x222222
         });
 
     ball.setCollisionCallback(function () {
@@ -49,8 +52,8 @@
     });
     
     simulator.addEntities([ball, paddle, floor]);
-    simulator.setEntityInteractionProperties(ball, paddle, 0.1, 0.99);
-    simulator.setEntityInteractionProperties(ball, floor, 0.1, 0.99);
+    simulator.setEntityInteractionProperties(ball, paddle, 0.1, 0.9);
+    simulator.setEntityInteractionProperties(ball, floor, 0.1, 0.9);
 
     document.addEventListener("keydown", function keyDown(e) {
         var key = String.fromCharCode(e.which);

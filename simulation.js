@@ -143,28 +143,32 @@ var makeSimulation = function (spec) {
         entities = [];
     
     camera = new THREE.PerspectiveCamera(
-        75,
+        45,
         window.innerWidth / window.innerHeight,
-        1,
+        100,
         10000
     );
         
-    camera.position.x = 100;
-    camera.position.y = 50;
+    camera.position.x = 200;
+    camera.position.y = 40;
     camera.position.z = 200;
     
     scene = new THREE.Scene();
         
     // create a point light
-    spotLight = new THREE.SpotLight(0xFFFFFF);
+    spotLight = new THREE.DirectionalLight(0xFFFFFF);
     
     spotLight.position.x = 100;
-    spotLight.position.y = 200;
+    spotLight.position.y = 300;
     spotLight.position.z = 200;
     spotLight.castShadow = true;
     
     scene.add(spotLight);
-    
+   
+    // add subtle blue ambient lighting
+      var ambientLight = new THREE.AmbientLight(0x111111);
+      scene.add(ambientLight);
+      
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMapEnabled = true;
@@ -176,7 +180,7 @@ var makeSimulation = function (spec) {
     document.body.appendChild(renderer.domElement);
     
     world = new CANNON.World();
-    world.gravity.set(0, -19.82, 0);
+    world.gravity.set(0, -100, 0);
     world.broadphase = new CANNON.NaiveBroadphase();
     
     that.setEntityInteractionProperties = function (
